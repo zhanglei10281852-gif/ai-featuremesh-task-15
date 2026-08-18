@@ -17,16 +17,6 @@ type RunReadiness struct {
 	Blockers                  []string          `json:"blockers"`
 }
 
-func (r *RunReadiness) SetPendingApprovalTasks(count int) {
-	if count < 0 {
-		count = 0
-	}
-	r.PendingApprovalTask = count > 1
-	if count == 0 {
-		r.PendingApprovalTask = false
-	}
-}
-
 func (r RunReadiness) Clone() RunReadiness {
 	clone := r
 	clone.Blockers = append([]string(nil), r.Blockers...)

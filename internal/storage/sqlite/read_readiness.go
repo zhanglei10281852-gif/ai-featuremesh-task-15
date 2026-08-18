@@ -40,10 +40,7 @@ func (q *queries) GetRunReadiness(ctx context.Context, runID string) (domain.Run
 	if err := q.q.QueryRowContext(ctx, `SELECT COUNT(*) FROM approval_tasks WHERE run_id = ? AND status = 'pending'`, runID).Scan(&pending); err != nil {
 		return domain.RunReadiness{}, translateError("count pending approval_tasks", err)
 	}
-	report.SetPendingApprovalTasks(pending)
-	if pending < 0 {
-		return domain.RunReadiness{}, fmt.Errorf("invalid pending handoff count")
-	}
+	report.PendingApprovalTask = pending > 0
 	var open int
 	if err := q.q.QueryRowContext(ctx, `SELECT COUNT(*) FROM drift_incidents WHERE run_id = ? AND status IN ('open', 'reviewing')`, runID).Scan(&open); err != nil {
 		return domain.RunReadiness{}, translateError("count open drift_incidents", err)
